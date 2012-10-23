@@ -1,6 +1,7 @@
 #include "trianglemesh.hpp"
 #include "ply/TrianglePly.hpp"
 #include "glm/glm.hpp"
+#include "objparser.h"
 #include <QtDebug>
 
 TriangleMesh::TriangleMesh()
@@ -17,21 +18,31 @@ TriangleMesh::loadPly(string plyFileName)
     genGLbuffer();
 }
 
+int
+TriangleMesh::loadObj(string objFileName)
+{
+    //ObjParser<typeof(vertices), typeof(indices)> obj(vertices, indices);
+    ObjParser obj(*this);
+    obj.parse(objFileName);
+    if (!hasNormal)
+        genNormal();
+    genGLbuffer();
+}
+
 void
 TriangleMesh::genNormal()
 {
-    normals.reserve(vertices.size());
-
+    normals.resize(vertices.size());
     //memset(normals, 0, sizeof(GLfloat)*totalVertex);//IEEE 754 0.0 is 0
-    for (int i=0; i<vertices.size(); i++){
+    for (std::size_t i=0; i<vertices.size(); i++){
         normals[i]=glm::vec3(0.0f,0.0f,0.0f);
     }
     int totalTriangles=indices.size()/3;
     unsigned int ia,ib,ic;
-    for (int i=0; i<totalTriangles; i++){
-        ia=i*3;
-        ib=ia+1;
-        ic=ia+2;
+    for (int i=0,j=0; i<totalTriangles; i++){
+        ia=indices[j++];
+        ib=indices[j++];
+        ic=indices[j++];
         glm::vec3 a=vertices[ia];
         glm::vec3 b=vertices[ib];
         glm::vec3 c=vertices[ic];
@@ -40,9 +51,11 @@ TriangleMesh::genNormal()
         normals[ib]+=normal;
         normals[ic]+=normal;
     }
-    for (int i=0; i<vertices.size(); i++)
-        //if(count[i]!=0)
+    for (std::size_t i=0; i<vertices.size(); i++)
+        if(glm::length(normals[i])>0.0f)
             normals[i]=glm::normalize(normals[i]);
+        else
+            qDebug("vertext _%d_ not used", i);
 }
 
 void

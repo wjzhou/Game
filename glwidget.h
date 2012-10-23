@@ -6,7 +6,7 @@
 #include <QGLBuffer>
 #include <qglshaderprogram.h>
 #include "trianglemesh.hpp"
-
+#include "common.hpp"
 class GLWidget : public QGLWidget
 {
     Q_OBJECT
@@ -27,7 +27,11 @@ private:
     QGLShaderProgram m_shader;
     //QGLBuffer m_vertexBuffer;
     TriangleMesh tm;
-
+    GLint locColor;
+    GLint locLight;
+    GLint locMVP;
+    GLint locMV;
+    GLint locNM;
 };
 
 #endif // GLWIDGET_H

@@ -18,9 +18,9 @@ int main( int argc, char* argv[] )
 
     // Create a GLWidget requesting our format
     GLWidget w( glFormat );
-    qDebug() << "message"<<w.format().majorVersion();
+    //qDebug() << "message"<<w.format().majorVersion();
     QGLFormat theFormat=w.format();
-    qDebug() << "format"<<theFormat;
+    //qDebug() << "format"<<theFormat;
 
     w.show();
 
