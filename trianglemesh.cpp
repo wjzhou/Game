@@ -16,6 +16,7 @@ TriangleMesh::loadPly(string plyFileName)
     ply.parse(plyFileName);
     genNormal();
     genGLbuffer();
+    return 0;
 }
 
 int
@@ -27,6 +28,7 @@ TriangleMesh::loadObj(string objFileName)
     if (!hasNormal)
         genNormal();
     genGLbuffer();
+    return 0;
 }
 
 void
@@ -51,7 +53,7 @@ TriangleMesh::genNormal()
         normals[ib]+=normal;
         normals[ic]+=normal;
     }
-    for (std::size_t i=0; i<vertices.size(); i++)
+    for (unsigned int i=0; i<vertices.size(); i++)
         if(glm::length(normals[i])>0.0f)
             normals[i]=glm::normalize(normals[i]);
         else

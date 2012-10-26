@@ -39,6 +39,7 @@ void swap_byte_order(char* bytes);
 template <>
 inline void swap_byte_order<1>(char* bytes)
 {
+    (void)(bytes);  //to supress unused warning
 }
 
 template <>
