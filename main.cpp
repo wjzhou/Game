@@ -1,12 +1,16 @@
-#include <GL/glew.h>
+#include "common.hpp"
 #include <QApplication>
 #include <QGLFormat>
-
+#include "shader.hpp"
 #include "glwidget.h"
 
 
 int main( int argc, char* argv[] )
 {
+
+
+
+
     QApplication a( argc, argv );
 
     // Specify an OpenGL 3.3 format using the Core profile.

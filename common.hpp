@@ -1,6 +1,7 @@
 #ifndef COMMON_HPP
 #define COMMON_HPP
 #include <QtDebug>
+#include <GL/glew.h>
 #include <GL/gl.h>
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"

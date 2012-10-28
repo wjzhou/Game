@@ -23,11 +23,11 @@ int
 TriangleMesh::loadObj(string objFileName)
 {
     //ObjParser<typeof(vertices), typeof(indices)> obj(vertices, indices);
-    ObjParser obj(*this);
+    /*ObjParser obj(*this);
     obj.parse(objFileName);
     if (!hasNormal)
         genNormal();
-    genGLbuffer();
+    genGLbuffer();*/
     return 0;
 }
 

@@ -1,12 +1,13 @@
 #ifndef GLWIDGET_H
 #define GLWIDGET_H
-#include <GL/glew.h>
+#include "common.hpp"
 #include <QGLWidget>
-
 #include <QGLBuffer>
 #include <qglshaderprogram.h>
 #include "trianglemesh.hpp"
-#include "common.hpp"
+#include "scene/node.hpp"
+
+
 class GLWidget : public QGLWidget
 {
     Q_OBJECT
@@ -24,9 +25,10 @@ private:
     bool prepareShaderProgram( const QString& vertexShaderPath,
                                const QString& fragmentShaderPath );
 
-    QGLShaderProgram m_shader;
+
     //QGLBuffer m_vertexBuffer;
-    TriangleMesh tm;
+//    TriangleMesh tm;
+    Node rootNode;
     GLint locColor;
     GLint locLight;
     GLint locMVP;

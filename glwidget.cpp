@@ -2,9 +2,12 @@
 
 #include <QCoreApplication>
 #include <QKeyEvent>
-#include <GL/glew.h>
+//#include <GL/glew.h>
 #include "trianglemesh.hpp"
 #include <glm/gtc/matrix_transform.hpp>
+#include "scene/node.hpp"
+#include "objparser.h"
+#include "shader.hpp"
 
 
 
@@ -16,16 +19,18 @@ GLWidget::GLWidget( const QGLFormat& format, QWidget* parent )
 
 void GLWidget::initializeGL()
 {
-	glewExperimental = GL_TRUE;
+    //These have to be inited after get GL context
+    glewExperimental = GL_TRUE;
 
-	GLenum err = glewInit();
-	if (GLEW_OK != err)
-	{
-	  qDebug("Error: %s\n", glewGetErrorString(err));
-	}
+    GLenum err = glewInit();
+    if (GLEW_OK != err)
+    {
+      qDebug("Error: %s\n", glewGetErrorString(err));
+    }
+    qDebug("Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
+    Shader::init();
+    Material::init();
 
-
-	qDebug("Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
     QGLFormat glFormat = QGLWidget::format();
     if ( !glFormat.sampleBuffers() )
         qWarning() << "Could not enable sample buffers";
@@ -37,16 +42,22 @@ void GLWidget::initializeGL()
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     // Prepare a complete shader program...
-    if ( !prepareShaderProgram( "/home/wujun/workspace/game/opengl/ADSGouraud.vert",
+    /*if ( !prepareShaderProgram( "/home/wujun/workspace/game/opengl/ADSGouraud.vert",
                                 "/home/wujun/workspace/game/opengl/ADSGouraud.frag" ))
-        return;
+        return;*/
 //    if ( !prepareShaderProgram( "/home/wujun/workspace/game/opengl/simple.vert",
 //                                "/home/wujun/workspace/game/opengl/simple.frag" ))
 //        return;
 
     //begin ply
     //tm.loadPly("/home/wujun/workspace/game/opengl/teapot.ply");
-    tm.loadObj("/home/wujun/workspace/game/opengl/cube.obj");
+    //tm.loadObj("/home/wujun/workspace/game/opengl/cube.obj");
+
+    ObjParser obj;
+    obj.parse(std::string("/home/wujun/workspace/game/opengl/cube.obj"),
+              rootNode.geomrtries);
+
+
     //tm.loadObj("/home/wujun/Downloads/qq26-openglcanvas/qt.obj");
     //tm.loadObj("/home/wujun/Downloads/qq26-openglcanvas/models/toyplane.obj");
 
@@ -76,39 +87,26 @@ void GLWidget::initializeGL()
     glBindBuffer(GL_ARRAY_BUFFER,vetexBuffObj);
     glBufferData(GL_ARRAY_BUFFER,3*4*sizeof(GLfloat),points, GL_STATIC_DRAW);
 */
-    GLuint shader=m_shader.programId();
-    glBindAttribLocation(shader,0,"vertex");
-    glBindAttribLocation(shader,1,"normal");
-    GLint link_state;
-    glGetProgramiv(shader,GL_LINK_STATUS, &link_state);
+    //GLuint shader=m_shader.programId();
+
+    //GLint link_state;
+    //glGetProgramiv(shader,GL_LINK_STATUS, &link_state);
+    //glUseProgram(shader);
+
+
+    GLuint shader=Shader::findShaderByIllum(2);
     glUseProgram(shader);
-    checkGLError("1");
-
-
-
+    checkGLError("glwidget,3");
     locMVP = glGetUniformLocation(shader, "mvpMatrix");
     locMV = glGetUniformLocation(shader, "mvMatrix");
     locNM = glGetUniformLocation(shader, "normalMatrix");
 
-
-
-    GLint locAmbientColor = glGetUniformLocation(shader, "ambientColor");
-    GLfloat ambientColor[] = { 0.0f, 0.0f, 0.2f, 0.0f };
-    glUniform4fv(locAmbientColor, 1, ambientColor);
-
-    locColor = glGetUniformLocation(shader, "diffuseColor");
-    GLfloat diffuseColor[] = { 0.0f, 0.0f, 0.5f, 0.0f };
-    glUniform4fv(locColor, 1, diffuseColor);
-
-    GLint locSpecularColor = glGetUniformLocation(shader, "specularColor");
-    GLfloat specularColor[] = { 0.0f, 0.0f, 0.5f, 0.0f };
-    glUniform4fv(locSpecularColor, 1, specularColor);
-
+    checkGLError("glwidget,4");
     locLight = glGetUniformLocation(shader, "lightPosition");
     //GLfloat vEyeLight[] = { -50.0f, 50.0f, 50.0f };
     GLfloat vEyeLight[] = { 0.0f, 0.0f, 0.0f };
     glUniform3fv(locLight, 1, vEyeLight);
-
+    checkGLError("glwidget,5");
     /*glm::mat4 mvMatrix (1.0f, 0.0f, 0.0f, 0.0f,
                         0.0f, 1.0f, 0.0f, 0.0f,
                         0.0f, 0.0f, 1.0f, 0.0f,
@@ -125,6 +123,7 @@ void GLWidget::initializeGL()
     glm::mat3 normalMatrix=glm::transpose(glm::inverse(glm::mat3(mvMatrix)));
     glm::mat4 perspectiveMatrix=glm::frustum(-1.0f, 1.0f, -1.0f, 1.0f, 2.0f, 101.0f);
     qDebug()<<"perspectiveMatrix\n"<<perspectiveMatrix;
+    checkGLError("glwidget,4");
     glm::mat4 mvpMatrix=perspectiveMatrix*mvMatrix;
     qDebug()<<"mvpMatrix\n"<<mvpMatrix;
     glUniformMatrix4fv(locMVP, 1, GL_FALSE, &mvpMatrix[0][0]);
@@ -138,7 +137,8 @@ void GLWidget::initializeGL()
     qDebug()<<"locMVP"<<locMVP;
     qDebug()<<"locMV"<<locMV;
     qDebug()<<"locNM"<<locNM;*/
-    qDebug()<<"init finished"<<link_state;
+    checkGLError("glwidget,2");
+    qDebug()<<"init finished";
 }
 
 void GLWidget::resizeGL( int w, int h )
@@ -152,11 +152,12 @@ void GLWidget::paintGL()
 {
     // Clear the buffer with the current clearing color
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-    glBindVertexArray(tm.getVao());
+    //glBindVertexArray(tm.getVao());
     // Draw stuff
     //glDrawArrays( GL_TRIANGLES, 0, 3 );
-    glDrawElements(GL_TRIANGLES, tm.getElementCount(),  GL_UNSIGNED_INT,(GLvoid*)0);
-    glBindVertexArray(0);
+    //glDrawElements(GL_TRIANGLES, tm.getElementCount(),  GL_UNSIGNED_INT,(GLvoid*)0);
+    rootNode.draw();
+    //glBindVertexArray(0);
 }
 
 void GLWidget::keyPressEvent( QKeyEvent* e )
@@ -172,23 +173,4 @@ void GLWidget::keyPressEvent( QKeyEvent* e )
     }
 }
 
-bool GLWidget::prepareShaderProgram( const QString& vertexShaderPath,
-                                     const QString& fragmentShaderPath )
-{
-    // First we load and compile the vertex shader...
-    bool result = m_shader.addShaderFromSourceFile( QGLShader::Vertex, vertexShaderPath );
-    if ( !result )
-        qWarning() << m_shader.log();
 
-    // ...now the fragment shader...
-    result = m_shader.addShaderFromSourceFile( QGLShader::Fragment, fragmentShaderPath );
-    if ( !result )
-        qWarning() << m_shader.log();
-
-    // ...and finally we link them to resolve any references.
-    result = m_shader.link();
-    if ( !result )
-        qWarning() << "Could not link shader program:" << m_shader.log();
-    qDebug()<< m_shader.log();
-    return result;
-}

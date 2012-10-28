@@ -5,11 +5,16 @@
 #include <tr1/array>
 #include "common.hpp"
 #include <QtDebug>
+#include <tr1/memory>
+#include "material.hpp"
+#include "scene/geometry.hpp"
 
-ObjParser::ObjParser(TriangleMesh& atm)
+/*ObjParser::ObjParser(TriangleMesh& atm)
     :tm(atm)
 {
-}
+
+}*/
+//ObjParser::ObjParser
 
 struct CombinedIndex{
     unsigned int v;
@@ -22,6 +27,7 @@ struct CombinedIndex{
     }
     CombinedIndex(){v=vt=vn=0;next=NULL;}
     CombinedIndex(const CombinedIndex& a){v=a.v; vt=a.vt; vn=a.vn; next=NULL;}
+    CombinedIndex& operator= (const CombinedIndex& a){v=a.v; vt=a.vt; vn=a.vn; next=NULL; return *this;}
 };
 
 static
@@ -44,11 +50,14 @@ int findIndex(std::vector<CombinedIndex *>& combineIndices,
     return cv->index;
 }
 
-bool ObjParser::parse(std::string fileName){
+bool ObjParser::parse(const std::string& fileName,
+                      std::vector<Geometry*>& geometries)
+{
     FILE* f;
     char* buff=NULL;
     size_t buffLen=0;
     size_t linelen;
+
 
     std::vector<glm::vec3> tVertices;
     std::vector<glm::vec3> tNormals;
@@ -80,6 +89,17 @@ bool ObjParser::parse(std::string fileName){
       qDebug() << "Testing";
       return false;
     }
+
+
+    //tm=*(new TriangleMesh());
+
+
+    std::tr1::shared_ptr<TriangleMesh> ptm(new TriangleMesh());
+    //tm=*ptm;
+    std::tr1::shared_ptr<Material> pm=Material::defaultMatrial;
+
+
+
 
     while((linelen=getline(&buff, &buffLen, f))!=-1){ //use c language for
                                                       //better performance
@@ -118,7 +138,7 @@ bool ObjParser::parse(std::string fileName){
             continue;
         token = strtok_r(buff+2, " \t", &saved_ptr);
         for(int i=0;token;i++, token = strtok_r(NULL, " \n\t", &saved_ptr)){
-            if (tm.hasNormal && !tm.hasTexCoord) //special model f v//vn
+            if (hasNormal && !hasTexCoord) //special model f v//vn
                 sscanf(token,"%d//%d", &combineIndex.v, &combineIndex.vn);
             else
                 sscanf(token,"%d/%d/%d", &combineIndex.v, &combineIndex.vt, &combineIndex.vn);
@@ -130,46 +150,51 @@ bool ObjParser::parse(std::string fileName){
             }else if (i==1){
                 prevIndex=index;
             }else if (i>=2){
-                tm.indices.push_back(firstIndex);
-                tm.indices.push_back(prevIndex);
-                tm.indices.push_back(index);
+                ptm->indices.push_back(firstIndex);
+                ptm->indices.push_back(prevIndex);
+                ptm->indices.push_back(index);
                 prevIndex=index;
             }
         }
     }
     while((linelen=getline(&buff, &buffLen, f))!=-1);
 
-    tm.vertices.resize(currIndex);
+    ptm->vertices.resize(currIndex);
     if (hasNormal){
-        tm.hasNormal=true;
-        tm.normals.resize(currIndex);
+        ptm->hasNormal=true;
+        ptm->normals.resize(currIndex);
     }
     if (hasTexCoord){
-        tm.hasTexCoord=true;
-        tm.texCoords.resize(currIndex);
+        ptm->hasTexCoord=true;
+        ptm->texCoords.resize(currIndex);
     }
 
     for(unsigned int i=0; i<tVertices.size(); ++i){
         CombinedIndex* cv = combineIndices[i];
+        CombinedIndex* pv=cv;
         while (cv){
             int index = cv->index;
             if (cv->v <= 0 || cv->v >= tVertices.size())
                 goto error;
-            tm.vertices[index]=tVertices[cv->v];
+            ptm->vertices[index]=tVertices[cv->v];
             if (hasNormal){
                 if (cv->vn <= 0 || cv->vn >= tNormals.size())
                     goto error;
-                tm.normals[index]=tNormals[cv->vn];
+                ptm->normals[index]=tNormals[cv->vn];
             }
             if (hasTexCoord){
                 if (cv->vt <= 0 || cv->vt >= tTexCoords.size())
                     goto error;
-                tm.texCoords[index]=tTexCoords[cv->vt];
+                ptm->texCoords[index]=tTexCoords[cv->vt];
             }
+            pv=cv;
             cv=cv->next;
+            free(pv);
         }
     }
 
+    ptm->genGLbuffer();
+    geometries.push_back(new Geometry(ptm, pm, 0, currIndex));
     free(buff);
     return true;
 

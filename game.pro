@@ -12,6 +12,11 @@ SOURCES +=  \
     common.cpp \
     objparser.cpp \
 #    Transform.cpp
+#    gramma/ParseDriver.cpp \
+    scene/node.cpp \
+    scene/geometry.cpp \
+    material.cpp \
+    shader.cpp
 
 HEADERS  += \
     glwidget.h \
@@ -19,13 +24,18 @@ HEADERS  += \
     trianglemesh.hpp \
     Transform.hpp\
     common.hpp \
-    objparser.h
+    objparser.h \
+#    gramma/ParseDriver.hpp \
+    scene/node.hpp \
+    scene/geometry.hpp \
+    material.hpp \
+    shader.hpp
 
 OTHER_FILES +=  \
                 simple.vert \
                 simple.frag \
     ADSGouraud.vert \
-    ADSGouraud.frag
+    ADSGouraud.frag \
 
 RESOURCES +=    \
                 game.qrc
@@ -34,3 +44,9 @@ HEADERS += ply/TrianglePly.hpp \
            ply/ply_parser.hpp ply/ply.hpp      \
            ply/io_operators.hpp ply/byte_order.hpp
 SOURCES += ply/ply_parser.cpp
+
+#FLEXSOURCES = gramma/SceneScanner.lpp
+#BISONSOURCES = gramma/SceneParser.ypp
+
+include(gramma/flex.pri)
+include(gramma/bison.pri)
