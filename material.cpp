@@ -25,7 +25,7 @@ void Material::setupOpenGL()
     checkGLError("Material,3");
     GLint locSpecularColor = glGetUniformLocation(shader, "specularColor");
     glUniform4fv(locSpecularColor, 1, &ks[0]);
-
+    checkGLError("Material,4");
     GLint locNs = glGetUniformLocation(shader, "ns");
     glUniform1f(locNs, ns);
 }

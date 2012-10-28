@@ -7,10 +7,6 @@
 
 int main( int argc, char* argv[] )
 {
-
-
-
-
     QApplication a( argc, argv );
 
     // Specify an OpenGL 3.3 format using the Core profile.
@@ -27,7 +23,5 @@ int main( int argc, char* argv[] )
     //qDebug() << "format"<<theFormat;
 
     w.show();
-
-
     return a.exec();
 }

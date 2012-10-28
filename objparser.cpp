@@ -63,7 +63,6 @@ bool ObjParser::parse(const std::string& fileName,
     std::vector<glm::vec3> tNormals;
     std::vector<glm::vec3> tTexCoords;
     std::vector<glm::uint> tIndices;
-    //std::vector<attribute> attributes;
     std::vector<CombinedIndex *> combineIndices;
     CombinedIndex combineIndex;
     unsigned int currIndex=0;
@@ -74,6 +73,8 @@ bool ObjParser::parse(const std::string& fileName,
 
     char* saved_ptr; //used by strtok_r
     char* token;
+
+    int indexStart=0;
 
     bool hasNormal=false;
     bool hasTexCoord=false;
@@ -90,16 +91,8 @@ bool ObjParser::parse(const std::string& fileName,
       return false;
     }
 
-
-    //tm=*(new TriangleMesh());
-
-
     std::tr1::shared_ptr<TriangleMesh> ptm(new TriangleMesh());
-    //tm=*ptm;
     std::tr1::shared_ptr<Material> pm=Material::defaultMatrial;
-
-
-
 
     while((linelen=getline(&buff, &buffLen, f))!=-1){ //use c language for
                                                       //better performance
@@ -194,7 +187,7 @@ bool ObjParser::parse(const std::string& fileName,
     }
 
     ptm->genGLbuffer();
-    geometries.push_back(new Geometry(ptm, pm, 0, currIndex));
+    geometries.push_back(new Geometry(ptm, pm, indexStart, ptm->indices.size()-indexStart));
     free(buff);
     return true;
 
