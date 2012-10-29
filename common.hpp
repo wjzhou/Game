@@ -7,6 +7,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 void checkGLError(QString message);
 #define qassert Q_ASSERT
+#define assertion(cond, message) Q_ASSERT(cond)
 QDebug operator<<(QDebug dbg, const  glm::vec4& c);
 QDebug operator<<(QDebug dbg, const  glm::mat4& m);
 #endif // COMMON_HPP

@@ -1,4 +1,4 @@
-#include "Transform.hpp"
+#include "transform.hpp"
 const Transform Transform::IDENTITY;
 
 // Set the initial matrix to identity matrix
@@ -23,15 +23,15 @@ Transform::~Transform ()
 
 void Transform::MakeIdentity ()
 {
-    mHMatrix(1.0f);
-    mInvHMatrix(1.0f);
+    mHMatrix=glm::mat4(1.0f);
+    mInvHMatrix=glm::mat4(1.0f);
     mMatrix = glm::mat3(1.0f);
     mTranslate = glm::vec3(0.0f);
     mScale = glm::vec3(1.0f);
     mIsIdentity = true;
     mIsRSMatrix = true;
     mIsUniformScale = true;
-    mInverseNeedsUpdate(false);
+    mInverseNeedsUpdate=false;
 }
 
 void Transform::MakeUnitScale ()
@@ -186,7 +186,7 @@ Transform Transform::operator* (const Transform& transform) const
     glm::mat3 matMB = (transform.mIsRSMatrix ?
         glm::mat3(transform.mMatrix[0]*transform.mScale[0],
                   transform.mMatrix[1]*transform.mScale[1],
-                  transform.mMatrix[2]*transform.mScale[2]: mMatrix);
+                  transform.mMatrix[2]*transform.mScale[2]): mMatrix);
 
     product.SetMatrix(matMA*matMB);
     product.SetTranslate(matMA*transform.mTranslate + mTranslate);
@@ -298,10 +298,10 @@ Transform Transform::InverseTransform () const
     }
 
     Transform inverse;
-    glm::vec4 invTrn;
+    glm::vec3 invTrn;
     if (mIsRSMatrix)
     {
-        glm::mat3 invRot = mMatrix.Transpose();
+        glm::mat3 invRot = glm::transpose(mMatrix);
         inverse.SetRotate(invRot);
         if (mIsUniformScale)
         {
@@ -334,7 +334,7 @@ void Transform::UpdateHMatrix ()
 {
     if (mIsIdentity)
     {
-        mHMatrix = glm::mat4(1,0f);
+        mHMatrix = glm::mat4(1.0f);
     }
     else
     {
@@ -364,7 +364,7 @@ void Transform::UpdateHMatrix ()
             mHMatrix[2][0] = mMatrix[2][0];
             mHMatrix[2][1] = mMatrix[2][1];
             mHMatrix[2][2] = mMatrix[2][2];*/
-            mHMatrix=mMatrix;
+            mHMatrix=glm::mat4(mMatrix);
         }
 
         mHMatrix[3][0] = mTranslate[0];

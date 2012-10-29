@@ -11,7 +11,7 @@ SOURCES +=  \
     trianglemesh.cpp \
     common.cpp \
     objparser.cpp \
-#    Transform.cpp
+    transform.cpp \
 #    gramma/ParseDriver.cpp \
     scene/node.cpp \
     scene/geometry.cpp \
@@ -22,14 +22,14 @@ HEADERS  += \
     glwidget.h \
     renderogl.h \
     trianglemesh.hpp \
-    Transform.hpp\
     common.hpp \
     objparser.h \
 #    gramma/ParseDriver.hpp \
     scene/node.hpp \
     scene/geometry.hpp \
     material.hpp \
-    shader.hpp
+    shader.hpp \
+    transform.hpp
 
 OTHER_FILES +=  \
                 simple.vert \

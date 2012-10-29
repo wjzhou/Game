@@ -189,7 +189,7 @@ inline glm::vec3 Transform::multiply_vector (const glm::vec3& vec) const
     return mMatrix*vec;
 }
 //----------------------------------------------------------------------------
-inline const HMatrix& Transform::Matrix () const
+inline const glm::mat4& Transform::Matrix () const
 {
     return mHMatrix;
 }
@@ -202,6 +202,5 @@ inline const HMatrix& Transform::Matrix () const
 //----------------------------------------------------------------------------
 
 
-}
 #endif /* _TRANSFORM_H_ */
 
