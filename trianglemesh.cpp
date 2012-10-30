@@ -82,6 +82,16 @@ TriangleMesh::genGLbuffer()
     glEnableVertexAttribArray(1);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+
+    glGenBuffers(1, &texCoordBuffObj);
+    glBindBuffer(GL_ARRAY_BUFFER, texCoordBuffObj);
+    glBufferData(GL_ARRAY_BUFFER, texCoords.size()*3*sizeof(GLuint),
+                 &texCoords[0], GL_STATIC_DRAW);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (const void *)0);
+    glEnableVertexAttribArray(2);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
     glGenBuffers(1, &indexBuffObj);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffObj);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()*sizeof(GLuint),

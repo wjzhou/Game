@@ -2,7 +2,7 @@
 #include "shader.hpp"
 
 
-Shader::Shader( int illum, const QString& vertexShaderPath,
+Shader::Shader( const QString& vertexShaderPath,
                 const QString& fragmentShaderPath )
 {
     //qDebug()<<"Shader,1";
@@ -22,7 +22,7 @@ Shader::Shader( int illum, const QString& vertexShaderPath,
     if ( !result )
         qWarning() << "Shader: Could not link shader program:" << m_shader.log();
     //
-    shaderId=m_shader.programId();
+    GLuint shaderId=m_shader.programId();
 
     glBindAttribLocation(shaderId,0,"vertex");
     //qDebug()<<"Shader,4";
@@ -32,19 +32,10 @@ Shader::Shader( int illum, const QString& vertexShaderPath,
     glGetProgramiv(shaderId,GL_LINK_STATUS, &link_state);
     if(!link_state)
         qDebug()<<"Shader: link error:"<<m_shader.log();
-    shaders.insert(std::make_pair(illum,this));
     //qDebug()<<"Shader,2";
 }
 
-Shader*
-Shader::findShaderByIllum(int illum)
+GLuint Shader::getShaderId()
 {
-    std::tr1::unordered_map<int,Shader*>::const_iterator it=shaders.find(illum);
-    if (it==shaders.end()){
-        qWarning("Unknown illum model fall back to ADS");
-        return findShaderByIllum(2);
-    }
-    return it->second;
+    return m_shader.programId();
 }
-
-std::tr1::unordered_map<int, Shader*> Shader::shaders;

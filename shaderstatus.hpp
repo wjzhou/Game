@@ -10,6 +10,7 @@ struct ShaderStatus{
     Transform* globalTransform;
     glm::mat4* view;
     glm::mat4* perspective;
+    glm::vec3* lightPosition;
 };
 
 extern ShaderStatus shaderStatus;

@@ -15,9 +15,14 @@ GLWidget::GLWidget( const QGLFormat& format, QWidget* parent )
 
 }
 
+GLWidget::~GLWidget(){
+    Material::exit();
+}
+
 void GLWidget::initializeGL()
 {
     //These have to be inited after get GL context
+    //qDebug() << "format"<<theFormat;
     glewExperimental = GL_TRUE;
 
     GLenum err = glewInit();
@@ -26,9 +31,9 @@ void GLWidget::initializeGL()
       qDebug("Error: %s\n", glewGetErrorString(err));
     }
     //qDebug()<<"glwidge,2";
-    qDebug("Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));  
+    qDebug("Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
     //Shader::init();
-    Material::init();
+    Material::init();  //the matarial have to have a opengl context
     //qDebug()<<"glwidge,2";
 
     QGLFormat glFormat = QGLWidget::format();
@@ -42,25 +47,19 @@ void GLWidget::initializeGL()
 
     ObjParser obj;
     //obj.parse(std::string("/home/wujun/workspace/game/opengl/cube.obj"), rootNode.geomrtries);
-    obj.parse(std::string("/home/wujun/var/REORCTaxi/taxi.obj"), rootNode.geomrtries);
+    obj.parse(std::string("/home/wujun/workspace/game/opengl/model/REORCTaxi/taxi.obj"), rootNode.geomrtries);
 
     //tm.loadObj("/home/wujun/Downloads/qq26-openglcanvas/qt.obj");
     //tm.loadObj("/home/wujun/Downloads/qq26-openglcanvas/models/toyplane.obj");
 
     rootNode.globalTransform=Transform();
 
-    GLuint shader=Shader::findShaderByIllum(2)->shaderId;
-    glUseProgram(shader);
-    checkGLError("glwidget,3");
+    //GLuint shader=Material::findShaderByIllum(2)->shaderId;
+//    glUseProgram(shader);
+//    checkGLError("glwidget,3");
 
+    shaderStatus.lightPosition=new glm::vec3(0.0f, 0.0f, 0.0f);
 
-
-    checkGLError("glwidget,4");
-    GLint locLight = glGetUniformLocation(shader, "lightPosition");
-    //GLfloat vEyeLight[] = { -50.0f, 50.0f, 50.0f };
-    GLfloat vEyeLight[] = { 0.0f, 0.0f, 0.0f };
-    glUniform3fv(locLight, 1, vEyeLight);
-    checkGLError("glwidget,5");
 
     shaderStatus.view=new glm::mat4();
     *shaderStatus.view=glm::lookAt(glm::vec3(5.0f,5.0f,5.0f),

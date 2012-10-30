@@ -23,6 +23,7 @@ private:
     GLuint vetexBuffObj;
     GLuint indexBuffObj;
     GLuint normalBuffObj;
+    GLuint texCoordBuffObj;
     std::vector<glm::vec3> vertices;
     std::vector<GLuint> indices;
     std::vector<glm::vec3> normals;

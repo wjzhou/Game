@@ -35,7 +35,7 @@ static void parseMTL(const char* objfileName, const char* mtlfileName)
     QDir d = QFileInfo(QString(objfileName)).absoluteDir();
     QString absMtlfileName=d.filePath(mtlfileName);
     QFile file(absMtlfileName);
-
+    QString map_kd_filename;
     if (!file.open(QIODevice::ReadOnly))
         return;
     QTextStream in(&file);
@@ -50,8 +50,13 @@ static void parseMTL(const char* objfileName, const char* mtlfileName)
 
         if (id == "newmtl") {
             if (hasNewMTL){
-                new ADSMaterial(mtlname.toStdString(),illum,ka,kd,ks,ns);
+                if (map_kd_filename.length()>0){
+                    ADSMaterialWithTexture *p=new ADSMaterialWithTexture(mtlname.toStdString(),illum,ka,kd,ks,ns);
+                    p->setKdMap(d.filePath(map_kd_filename));
+                }else
+                    new ADSMaterial(mtlname.toStdString(),illum,ka,kd,ks,ns);
             }
+            map_kd_filename.clear();
             hasNewMTL=true;
             ts>>mtlname;
         } else if (id == "Ka") {
@@ -65,10 +70,16 @@ static void parseMTL(const char* objfileName, const char* mtlfileName)
             ks=glm::vec4(a,b,c,0.0f);
         } else if (id == "Ns") {
             ts>>ns;
+        } else if (id == "map_Kd"){
+            ts>>map_kd_filename;
         }
     }
     if (hasNewMTL){
-        new ADSMaterial(mtlname.toStdString(),illum,ka,kd,ks,ns);
+        if (map_kd_filename.length()>0){
+            ADSMaterialWithTexture *p=new ADSMaterialWithTexture(mtlname.toStdString(),illum,ka,kd,ks,ns);
+            p->setKdMap(d.filePath(map_kd_filename));
+        }else
+            new ADSMaterial(mtlname.toStdString(),illum,ka,kd,ks,ns);
     }
 }
 
