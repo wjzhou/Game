@@ -9,6 +9,8 @@
 // http://www.geometrictools.com/License/Boost/LICENSE_1_0.txt
 //
 // File Version: 5.0.2 (2010/10/01)
+// After I realize how similiar my own class looks like elbley's, I decide to
+// use elbeley's class directly
 
 #ifndef _TRANSFORM_H_
 #define _TRANSFORM_H_
@@ -91,7 +93,8 @@ public:
     Transform operator* (const Transform& transform) const;
 
     // Get the homogeneous matrix.
-    inline const glm::mat4& Matrix () const;
+    inline const glm::mat4& HMatrix () const;
+    //inline const glm::mat3& getNormal () const;
 
     // Get the inverse homogeneous matrix, recomputing it when necessary.  If
     // H = {{M,T},{0,1}}, then H^{-1} = {{M^{-1},-M^{-1}*T},{0,1}}.
@@ -189,7 +192,7 @@ inline glm::vec3 Transform::multiply_vector (const glm::vec3& vec) const
     return mMatrix*vec;
 }
 //----------------------------------------------------------------------------
-inline const glm::mat4& Transform::Matrix () const
+inline const glm::mat4& Transform::HMatrix () const
 {
     return mHMatrix;
 }

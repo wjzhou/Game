@@ -29,7 +29,8 @@ HEADERS  += \
     scene/geometry.hpp \
     material.hpp \
     shader.hpp \
-    transform.hpp
+    transform.hpp \
+    shaderstatus.hpp
 
 OTHER_FILES +=  \
                 simple.vert \

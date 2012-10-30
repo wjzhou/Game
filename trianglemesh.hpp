@@ -36,7 +36,16 @@ private:
     std::vector<glm::vec3>  genNormal(){return normals;}*/
     void genNormal();
     void genGLbuffer();
-
 };
+
+inline GLuint TriangleMesh::getVao()
+{
+    return vao;
+}
+
+inline GLsizei TriangleMesh::getElementCount()
+{
+    return indices.size();
+}
 
 #endif // TRIANGLEMESH_HPP

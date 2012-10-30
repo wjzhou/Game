@@ -2,7 +2,7 @@
 #include "shader.hpp"
 
 
-Shader::Shader( const QString& vertexShaderPath,
+Shader::Shader( int illum, const QString& vertexShaderPath,
                 const QString& fragmentShaderPath )
 {
     //qDebug()<<"Shader,1";
@@ -32,26 +32,19 @@ Shader::Shader( const QString& vertexShaderPath,
     glGetProgramiv(shaderId,GL_LINK_STATUS, &link_state);
     if(!link_state)
         qDebug()<<"Shader: link error:"<<m_shader.log();
+    shaders.insert(std::make_pair(illum,this));
     //qDebug()<<"Shader,2";
 }
 
-int
+Shader*
 Shader::findShaderByIllum(int illum)
 {
-
     std::tr1::unordered_map<int,Shader*>::const_iterator it=shaders.find(illum);
     if (it==shaders.end()){
         qWarning("Unknown illum model fall back to ADS");
         return findShaderByIllum(2);
     }
-    return it->second->shaderId;
-}
-
-void
-Shader::init()
-{
-    shaders.insert(std::make_pair(2, new Shader("/home/wujun/workspace/game/opengl/ADSGouraud.vert",
-                       "/home/wujun/workspace/game/opengl/ADSGouraud.frag")));
+    return it->second;
 }
 
 std::tr1::unordered_map<int, Shader*> Shader::shaders;

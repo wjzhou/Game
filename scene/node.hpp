@@ -9,7 +9,8 @@ class Node : public QObject
     Q_OBJECT
 public:
     explicit Node(QObject *parent = 0);
-    Transform transform;
+    Transform localTransform;
+    Transform globalTransform;
     std::vector<Node*> nodes;
     std::vector<Geometry*> geomrtries;
     void draw();

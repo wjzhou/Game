@@ -92,14 +92,6 @@ TriangleMesh::genGLbuffer()
 }
 
 
-GLuint TriangleMesh::getVao()
-{
-    return vao;
-}
 
-GLsizei TriangleMesh::getElementCount()
-{
-    return indices.size();
-}
 
 

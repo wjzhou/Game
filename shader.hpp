@@ -5,12 +5,13 @@
 class Shader
 {
 public:
-    Shader(const QString& vertexShaderPath,
+    Shader(int illum,const QString& vertexShaderPath,
            const QString& fragmentShaderPath);
     QGLShaderProgram m_shader;
     GLuint shaderId;
-    static int findShaderByIllum(int illum);
-    static void init();
+    void setupGeometry();
+    static Shader* findShaderByIllum(int illum);
+    //static void init();
 private:
     static std::tr1::unordered_map<int, Shader*> shaders;
 

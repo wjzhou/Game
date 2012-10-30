@@ -8,7 +8,7 @@
 #include "scene/node.hpp"
 #include "objparser.h"
 #include "shader.hpp"
-
+#include "shaderstatus.hpp"
 GLWidget::GLWidget( const QGLFormat& format, QWidget* parent )
     : QGLWidget( format, parent )
 {
@@ -27,7 +27,7 @@ void GLWidget::initializeGL()
     }
     //qDebug()<<"glwidge,2";
     qDebug("Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));  
-    Shader::init();
+    //Shader::init();
     Material::init();
     //qDebug()<<"glwidge,2";
 
@@ -47,10 +47,28 @@ void GLWidget::initializeGL()
     //tm.loadObj("/home/wujun/Downloads/qq26-openglcanvas/qt.obj");
     //tm.loadObj("/home/wujun/Downloads/qq26-openglcanvas/models/toyplane.obj");
 
+    rootNode.globalTransform=Transform();
+
+    GLuint shader=Shader::findShaderByIllum(2)->shaderId;
+    glUseProgram(shader);
+    checkGLError("glwidget,3");
 
 
-    checkGLError("glwidget,2");
-    qDebug()<<"init finished";
+
+    checkGLError("glwidget,4");
+    GLint locLight = glGetUniformLocation(shader, "lightPosition");
+    //GLfloat vEyeLight[] = { -50.0f, 50.0f, 50.0f };
+    GLfloat vEyeLight[] = { 0.0f, 0.0f, 0.0f };
+    glUniform3fv(locLight, 1, vEyeLight);
+    checkGLError("glwidget,5");
+
+    shaderStatus.view=new glm::mat4();
+    *shaderStatus.view=glm::lookAt(glm::vec3(0.0f,-5.0f,5.0f),
+                                   glm::vec3(0.0f,0.0f,0.0f),
+                                   glm::vec3(0.0f,0.0f,1.0f));
+
+    shaderStatus.perspective=new glm::mat4();
+    *shaderStatus.perspective=glm::frustum(-1.0f, 1.0f, -1.0f, 1.0f, 2.0f, 101.0f);
 }
 
 void GLWidget::resizeGL( int w, int h )
