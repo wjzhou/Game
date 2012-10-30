@@ -8,13 +8,70 @@
 #include <tr1/memory>
 #include "material.hpp"
 #include "scene/geometry.hpp"
-
+#include <QFile>
+#include <QDir>
+#include <QTextStream>
 /*ObjParser::ObjParser(TriangleMesh& atm)
     :tm(atm)
 {
 
 }*/
 //ObjParser::ObjParser
+
+static void parseMTL(const char* objfileName, const char* mtlfileName)
+{
+    //mtl should be much shorter, use qstring for convinience
+    QString mtlname;
+    glm::vec4 ka;
+    glm::vec4 kd;
+    glm::vec4 ks;
+    float a,b,c;
+    float ns=0;
+    int illum=2;
+    bool hasNewMTL=false; //because I construct adsmaterial after gather all the parameter.
+                          //this used to indicate there are old one pending
+
+    //QFile qobjfile(QString(objfile));
+    QDir d = QFileInfo(QString(objfileName)).absoluteDir();
+    QString absMtlfileName=d.filePath(mtlfileName);
+    QFile file(absMtlfileName);
+
+    if (!file.open(QIODevice::ReadOnly))
+        return;
+    QTextStream in(&file);
+    while (!in.atEnd()) {
+        QString input = in.readLine();
+        if (input.isEmpty() || input[0] == '#')
+            continue;
+
+        QTextStream ts(&input);
+        QString id;
+        ts >> id;
+
+        if (id == "newmtl") {
+            if (hasNewMTL){
+                new ADSMaterial(mtlname.toStdString(),illum,ka,kd,ks,ns);
+            }
+            hasNewMTL=true;
+            ts>>mtlname;
+        } else if (id == "Ka") {
+            ts>>a>>b>>c;
+            ka=glm::vec4(a,b,c,0.0f);
+        } else if (id == "Kd") {
+            ts>>a>>b>>c;
+            kd=glm::vec4(a,b,c,0.0f);
+        } else if (id == "Ks") {
+            ts>>a>>b>>c;
+            ks=glm::vec4(a,b,c,0.0f);
+        } else if (id == "Ns") {
+            ts>>ns;
+        }
+    }
+    if (hasNewMTL){
+        new ADSMaterial(mtlname.toStdString(),illum,ka,kd,ks,ns);
+    }
+}
+
 
 struct CombinedIndex{
     unsigned int v;
@@ -58,7 +115,6 @@ bool ObjParser::parse(const std::string& fileName,
     size_t buffLen=0;
     size_t linelen;
 
-
     std::vector<glm::vec3> tVertices;
     std::vector<glm::vec3> tNormals;
     std::vector<glm::vec3> tTexCoords;
@@ -74,7 +130,7 @@ bool ObjParser::parse(const std::string& fileName,
     char* saved_ptr; //used by strtok_r
     char* token;
 
-    int indexStart=0;
+    int indexStart=0,length;
 
     bool hasNormal=false;
     bool hasTexCoord=false;
@@ -115,42 +171,60 @@ bool ObjParser::parse(const std::string& fileName,
                 tTexCoords.push_back(p);
             }
         }else if (buff[0]=='f'){
-            //end of vertex definition
-            combineIndices.resize(tVertices.size());
-
-            if (tNormals.size()>1)
-                hasNormal=true;
-            if (tTexCoords.size()>1)
-                hasTexCoord=true;
-            break;
-        }
-    }
-
-    do{
-        if (buff[0]!='f')
-            continue;
-        token = strtok_r(buff+2, " \t", &saved_ptr);
-        for(int i=0;token;i++, token = strtok_r(NULL, " \n\t", &saved_ptr)){
-            if (hasNormal && !hasTexCoord) //special model f v//vn
-                sscanf(token,"%d//%d", &combineIndex.v, &combineIndex.vn);
-            else
-                sscanf(token,"%d/%d/%d", &combineIndex.v, &combineIndex.vt, &combineIndex.vn);
-
-            index=findIndex(combineIndices, combineIndex, currIndex);
-
-            if (i==0){
-                firstIndex=index;
-            }else if (i==1){
-                prevIndex=index;
-            }else if (i>=2){
-                ptm->indices.push_back(firstIndex);
-                ptm->indices.push_back(prevIndex);
-                ptm->indices.push_back(index);
-                prevIndex=index;
+            if (tVertices.size() > combineIndices.size()){
+                combineIndices.resize(tVertices.size());
+                if (tNormals.size()>1)
+                    hasNormal=true;
+                if (tTexCoords.size()>1)
+                    hasTexCoord=true;
             }
+            token = strtok_r(buff+2, " \t", &saved_ptr);
+            for(int i=0;token;i++, token = strtok_r(NULL, " \r\n\t", &saved_ptr)){
+                if (hasNormal && !hasTexCoord) //special model f v//vn
+                    sscanf(token,"%d//%d", &combineIndex.v, &combineIndex.vn);
+                else
+                    sscanf(token,"%d/%d/%d", &combineIndex.v, &combineIndex.vt, &combineIndex.vn);
+
+                index=findIndex(combineIndices, combineIndex, currIndex);
+
+                if (i==0){
+                    firstIndex=index;
+                }else if (i==1){
+                    prevIndex=index;
+                }else if (i>=2){
+                    ptm->indices.push_back(firstIndex);
+                    ptm->indices.push_back(prevIndex);
+                    ptm->indices.push_back(index);
+                    prevIndex=index;
+                }
+            }
+        } else if (buff[0]=='u'){
+            token = strtok_r(buff, " \t", &saved_ptr);
+            if (!strcmp("usemtl", token)){
+                length=ptm->indices.size()-indexStart;
+                if (length>0){
+                    geometries.push_back(new Geometry(ptm, pm, indexStart, length));
+                    indexStart=ptm->indices.size();
+                }
+                std::string mtlName(strtok_r(NULL, " \r\n\t", &saved_ptr));
+                pm=Material::findMaterialByName(mtlName);
+            }
+
+        } else if (buff[0]=='m'){
+            token = strtok_r(buff, " \t", &saved_ptr);
+            if (!strcmp("mtllib", token)){
+                token=strtok_r(NULL, " \r\n\t", &saved_ptr);
+                parseMTL(fileName.c_str(),token);
+            }
+
         }
     }
-    while((linelen=getline(&buff, &buffLen, f))!=-1);
+
+    length=ptm->indices.size()-indexStart;
+    if (length>0){
+        geometries.push_back(new Geometry(ptm, pm, indexStart, length));
+        indexStart=ptm->indices.size();
+    }
 
     ptm->vertices.resize(currIndex);
     if (hasNormal){
@@ -185,9 +259,7 @@ bool ObjParser::parse(const std::string& fileName,
             free(pv);
         }
     }
-
     ptm->genGLbuffer();
-    geometries.push_back(new Geometry(ptm, pm, indexStart, ptm->indices.size()-indexStart));
     free(buff);
     return true;
 

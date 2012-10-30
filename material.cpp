@@ -40,6 +40,16 @@ void Material::setupGeometry()
 std::tr1::unordered_map<std::string, std::tr1::shared_ptr<Material> >
  Material::materials;
 
+std::tr1::shared_ptr<Material> Material::findMaterialByName(const std::string& name)
+{
+    std::tr1::unordered_map<std::string, std::tr1::shared_ptr<Material> >::const_iterator it=materials.find(name);
+    if (it==materials.end()){
+        qWarning("Unknown material [%s] fall back to default material", name.c_str());
+        return Material::defaultMatrial;
+    }
+    return it->second;
+}
+
 void Material::init(){
       new Shader(2, "/home/wujun/workspace/game/opengl/ADSGouraud.vert",
                  "/home/wujun/workspace/game/opengl/ADSGouraud.frag");
@@ -84,5 +94,22 @@ void ADSMaterial::prepareShader()
         shaderStatus.material=this;
     }
 }
-
 ShaderStatus shaderStatus;
+
+ADSMaterialWithTexture::ADSMaterialWithTexture(const std::string &name, int illum, const glm::vec4 &ka, const glm::vec4 &kd, const glm::vec4 &ks, float ns)
+    :ADSMaterial(name,illum, ka, kd, ks, ns)
+{
+    GLuint locMap_Ka=glGetUniformLocation(shaderId, "map_ka");
+    glUniform1i(locMap_Ka, 0);
+
+}
+
+void ADSMaterialWithTexture::setKdMap(const char* textureFileName){
+    //texBuffObj=currentContext()->bindTexture(textureFileName);
+}
+
+void ADSMaterialWithTexture::prepareShader(){
+    ADSMaterial::prepareShader();
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texBuffObj);
+}

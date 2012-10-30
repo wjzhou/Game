@@ -37,6 +37,8 @@ OTHER_FILES +=  \
                 simple.frag \
     ADSGouraud.vert \
     ADSGouraud.frag \
+    ADSGouraudTexture.vert \
+    ADSGouraudTexture.frag \
 
 RESOURCES +=    \
                 game.qrc

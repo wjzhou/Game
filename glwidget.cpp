@@ -41,8 +41,8 @@ void GLWidget::initializeGL()
     glEnable(GL_DEPTH_TEST);
 
     ObjParser obj;
-    obj.parse(std::string("/home/wujun/workspace/game/opengl/cube.obj"),
-              rootNode.geomrtries);
+    //obj.parse(std::string("/home/wujun/workspace/game/opengl/cube.obj"), rootNode.geomrtries);
+    obj.parse(std::string("/home/wujun/var/REORCTaxi/taxi.obj"), rootNode.geomrtries);
 
     //tm.loadObj("/home/wujun/Downloads/qq26-openglcanvas/qt.obj");
     //tm.loadObj("/home/wujun/Downloads/qq26-openglcanvas/models/toyplane.obj");
@@ -63,9 +63,9 @@ void GLWidget::initializeGL()
     checkGLError("glwidget,5");
 
     shaderStatus.view=new glm::mat4();
-    *shaderStatus.view=glm::lookAt(glm::vec3(0.0f,-5.0f,5.0f),
+    *shaderStatus.view=glm::lookAt(glm::vec3(5.0f,5.0f,5.0f),
                                    glm::vec3(0.0f,0.0f,0.0f),
-                                   glm::vec3(0.0f,0.0f,1.0f));
+                                   glm::vec3(0.0f,1.0f,0.0f));
 
     shaderStatus.perspective=new glm::mat4();
     *shaderStatus.perspective=glm::frustum(-1.0f, 1.0f, -1.0f, 1.0f, 2.0f, 101.0f);
@@ -92,7 +92,10 @@ void GLWidget::keyPressEvent( QKeyEvent* e )
         case Qt::Key_Escape:
             QCoreApplication::instance()->quit();
             break;
-
+        case Qt::Key_Down:
+        (*shaderStatus.view)=glm::rotate(*shaderStatus.view,30.0f, glm::vec3(1.0f,0.0f,0.0f));
+        this->repaint();
+            break;
         default:
             QGLWidget::keyPressEvent( e );
     }

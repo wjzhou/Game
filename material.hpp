@@ -12,6 +12,7 @@ public:
     std::string name;
     const Shader* getShader();
     virtual void prepareShader()=0;
+    static std::tr1::shared_ptr<Material> findMaterialByName(const std::string& name);
     static std::tr1::unordered_map<std::string, std::tr1::shared_ptr<Material> >  materials;
     static std::tr1::shared_ptr<Material> defaultMatrial; //default is a keyword.. almost forget that
     static void init();
@@ -43,11 +44,21 @@ public:
     int illum;   //illumination model, I use this to select shade program
     void prepareShader();
     ADSMaterial(const std::string& name, int illum, const glm::vec4& ka, const glm::vec4& kd, const glm::vec4& ks, float ns);
+    //ADSMaterial(const std::string& name)
 private:
     GLint locAmbientColor;
     GLint locColor;
     GLint locSpecularColor;
     GLint locNs;
+};
+
+class ADSMaterialWithTexture: public ADSMaterial{
+public:
+     ADSMaterialWithTexture(const std::string& name, int illum, const glm::vec4& ka, const glm::vec4& kd, const glm::vec4& ks, float ns);
+     void setKdMap(const char* textureFileName);
+     void prepareShader();
+private:
+     GLuint texBuffObj;
 };
 
 #endif // MATERIAL_HPP
