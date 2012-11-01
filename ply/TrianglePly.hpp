@@ -209,7 +209,7 @@ bool Ply<TVertex,TIndex>::parse(const string& filename)
   }
   ply::ply_parser ply_parser;
 
-  ply_parser.info_callback(std::tr1::bind(&(Ply<TVertex,TIndex>::info_callback), this, std::tr1::ref(istream_filename), _1, _2));
+  ply_parser.info_callback(std::tr1::bind(&Ply<TVertex,TIndex>::info_callback, this, std::tr1::ref(istream_filename), _1, _2));
   ply_parser.warning_callback(std::tr1::bind(&Ply<TVertex,TIndex>::warning_callback, this, std::tr1::ref(istream_filename), _1, _2));
   ply_parser.error_callback(std::tr1::bind(&Ply<TVertex,TIndex>::error_callback, this, std::tr1::ref(istream_filename), _1, _2));
 
