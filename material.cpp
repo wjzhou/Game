@@ -55,8 +55,8 @@ std::tr1::shared_ptr<Material> Material::findMaterialByName(const std::string& n
 
 void Material::init(){
     std::tr1::shared_ptr<Shader> pShader(
-                new Shader("/home/wujun/workspace/game/opengl/ADSGouraud.vert",
-                           "/home/wujun/workspace/game/opengl/ADSGouraud.frag"));
+                new Shader("./ADSGouraud.vert",
+                           "./ADSGouraud.frag"));
     ADSMaterial::shaders.insert(std::make_pair(2, pShader));
     new ADSMaterial("default", 2,
                      glm::vec4(0.0f, 0.0f, 0.2f, 0.0f),
@@ -64,8 +64,8 @@ void Material::init(){
                      glm::vec4(0.0f, 0.0f, 0.5f, 0.0f), 20);
     defaultMatrial=Material::findMaterialByName("default");
     ADSMaterialWithTexture::textShader.reset(
-                new Shader("/home/wujun/workspace/game/opengl/ADSGouraudTexture.vert",
-                           "/home/wujun/workspace/game/opengl/ADSGouraudTexture.frag"));
+                new Shader("./ADSGouraudTexture.vert",
+                           "./ADSGouraudTexture.frag"));
 }
 
 void Material::exit(){

@@ -2,6 +2,7 @@
 
 #include <QCoreApplication>
 #include <QKeyEvent>
+#include <QDir>
 //#include <GL/glew.h>
 #include "trianglemesh.hpp"
 #include <glm/gtc/matrix_transform.hpp>
@@ -47,7 +48,7 @@ void GLWidget::initializeGL()
 
     ObjParser obj;
     //obj.parse(std::string("/home/wujun/workspace/game/opengl/cube.obj"), rootNode.geomrtries);
-    obj.parse(std::string("/home/wujun/workspace/game/opengl/model/REORCTaxi/taxi.obj"), rootNode.geomrtries);
+    obj.parse(std::string("model/REORCTaxi/taxi.obj"), rootNode.geomrtries);
 
     //tm.loadObj("/home/wujun/Downloads/qq26-openglcanvas/qt.obj");
     //tm.loadObj("/home/wujun/Downloads/qq26-openglcanvas/models/toyplane.obj");

@@ -51,5 +51,7 @@ SOURCES += ply/ply_parser.cpp
 #FLEXSOURCES = gramma/SceneScanner.lpp
 #BISONSOURCES = gramma/SceneParser.ypp
 
+DESTDIR=$$_PRO_FILE_PWD_
+
 include(gramma/flex.pri)
 include(gramma/bison.pri)
