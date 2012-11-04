@@ -29,9 +29,9 @@ void Material::setupGeometry()
 {
     checkGLError("Material,3");
     Transform* gTransform=shaderStatus.globalTransform;
-    glm::mat4 mvMatrix=(*shaderStatus.view)*gTransform->HMatrix();
+    glm::mat4 mvMatrix=(shaderStatus.camera->getViewMatrix())*gTransform->HMatrix();
     glm::mat3 normalMatrix=glm::transpose(glm::inverse(glm::mat3(mvMatrix)));
-    glm::mat4 mvpMatrix=(*shaderStatus.perspective)*mvMatrix;
+    glm::mat4 mvpMatrix=(shaderStatus.camera->getPerspectiveMatrix())*mvMatrix;
     glUniformMatrix4fv(locMVP, 1, GL_FALSE, &mvpMatrix[0][0]);
     glUniformMatrix4fv(locMV, 1, GL_FALSE, &mvMatrix[0][0]);
     glUniformMatrix3fv(locNM, 1, GL_FALSE, &normalMatrix[0][0]);

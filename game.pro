@@ -16,7 +16,8 @@ SOURCES +=  \
     scene/node.cpp \
     scene/geometry.cpp \
     material.cpp \
-    shader.cpp
+    shader.cpp \
+    camera.cpp
 
 HEADERS  += \
     glwidget.h \
@@ -30,7 +31,8 @@ HEADERS  += \
     material.hpp \
     shader.hpp \
     transform.hpp \
-    shaderstatus.hpp
+    shaderstatus.hpp \
+    camera.hpp
 
 OTHER_FILES +=  \
                 simple.vert \

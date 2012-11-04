@@ -6,7 +6,7 @@
 #include <qglshaderprogram.h>
 #include "trianglemesh.hpp"
 #include "scene/node.hpp"
-
+#include "camera.hpp"
 
 class GLWidget : public QGLWidget
 {
@@ -17,24 +17,14 @@ public:
 
 protected:
     virtual void initializeGL();
-    virtual void resizeGL( int w, int h );
+    virtual void resizeGL(int w, int h);
     virtual void paintGL();
-
-    virtual void keyPressEvent( QKeyEvent* e );
-
+    virtual void keyPressEvent( QKeyEvent* e);
+    virtual void mouseMoveEvent(QMouseEvent* e);
 private:
-    bool prepareShaderProgram( const QString& vertexShaderPath,
-                               const QString& fragmentShaderPath );
-
-
-    //QGLBuffer m_vertexBuffer;
-//    TriangleMesh tm;
     Node rootNode;
-    GLint locColor;
-    GLint locLight;
-    GLint locMVP;
-    GLint locMV;
-    GLint locNM;
+    CameraControl* cameraControl;
+    GLint locLight;//I will get rid of this after add light class
 };
 extern GLWidget* glWidget;
 

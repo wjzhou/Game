@@ -55,20 +55,11 @@ void GLWidget::initializeGL()
 
     rootNode.globalTransform=Transform();
 
-    //GLuint shader=Material::findShaderByIllum(2)->shaderId;
-//    glUseProgram(shader);
-//    checkGLError("glwidget,3");
+    Camera* camera=new Camera();
+    cameraControl=new VirtualBallCameraControl(camera);
+    Camera::setCurrentCamera(camera);
 
     shaderStatus.lightPosition=new glm::vec3(0.0f, 0.0f, 0.0f);
-
-
-    shaderStatus.view=new glm::mat4();
-    *shaderStatus.view=glm::lookAt(glm::vec3(5.0f,5.0f,5.0f),
-                                   glm::vec3(0.0f,0.0f,0.0f),
-                                   glm::vec3(0.0f,1.0f,0.0f));
-
-    shaderStatus.perspective=new glm::mat4();
-    *shaderStatus.perspective=glm::frustum(-1.0f, 1.0f, -1.0f, 1.0f, 2.0f, 101.0f);
 }
 
 void GLWidget::resizeGL( int w, int h )
@@ -93,12 +84,15 @@ void GLWidget::keyPressEvent( QKeyEvent* e )
             QCoreApplication::instance()->quit();
             break;
         case Qt::Key_Down:
-        (*shaderStatus.view)=glm::rotate(*shaderStatus.view,30.0f, glm::vec3(1.0f,0.0f,0.0f));
-        this->repaint();
+        //(*shaderStatus.view)=glm::rotate(*shaderStatus.view,30.0f, glm::vec3(1.0f,0.0f,0.0f));
+             this->repaint();
             break;
         default:
             QGLWidget::keyPressEvent( e );
     }
 }
 
+void GLWidget::mouseMoveEvent(QMouseEvent *e){
+    cameraControl->mouseMoveEvent(e);
 
+}
