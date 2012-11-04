@@ -1,12 +1,19 @@
 #ifndef COMMON_HPP
 #define COMMON_HPP
+
+#include <GL/glew.h>
+#ifdef __APPLE__
+#include <OPENGL/gl.h>
+#else
+#include <GL/gl.h>
+#endif
+
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+
 #include <QtDebug>
 #define qassert Q_ASSERT
 #define assertion(cond, message) Q_ASSERT(cond)
-#include <GL/glew.h>
-#include <GL/gl.h>
-#include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
 
 void checkGLError(QString message);
 

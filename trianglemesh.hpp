@@ -1,9 +1,9 @@
 #ifndef TRIANGLEMESH_HPP
 #define TRIANGLEMESH_HPP
+#include "common.hpp"
 #include <glm/glm.hpp>
 #include <string>
 #include <vector>
-#include <GL/glew.h>
 
 class ObjParser;
 class TriangleMesh //: public GLObject
