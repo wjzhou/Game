@@ -54,6 +54,7 @@ std::tr1::shared_ptr<Material> Material::findMaterialByName(const std::string& n
 }
 
 void Material::init(){
+    checkGLError("Material,init,0");
     std::tr1::shared_ptr<Shader> pShader(
                 new Shader("./ADSGouraud.vert",
                            "./ADSGouraud.frag"));

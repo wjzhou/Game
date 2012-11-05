@@ -1,6 +1,6 @@
 #include "common.hpp"
 
-void checkGLError(QString message){
+void checkGLError(const QString& message){
     GLenum error=glGetError();
     if (error == GL_NO_ERROR)
         return;

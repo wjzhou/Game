@@ -15,7 +15,7 @@
 #define qassert Q_ASSERT
 #define assertion(cond, message) Q_ASSERT(cond)
 
-void checkGLError(QString message);
+void checkGLError(const QString& message);
 
 QDebug operator<<(QDebug dbg, const  glm::vec4& c);
 QDebug operator<<(QDebug dbg, const  glm::mat4& m);

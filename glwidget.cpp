@@ -22,20 +22,24 @@ GLWidget::~GLWidget(){
 
 void GLWidget::initializeGL()
 {
+    checkGLError("before glew");
     //These have to be inited after get GL context
-    //qDebug() << "format"<<theFormat;
-    glewExperimental = GL_TRUE;
+    glewExperimental = GL_TRUE; // This is needed for core profile
 
     GLenum err = glewInit();
     if (GLEW_OK != err)
     {
       qDebug("Error: %s\n", glewGetErrorString(err));
     }
-    //qDebug()<<"glwidge,2";
+
     qDebug("Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
-    //Shader::init();
+
+    checkGLError("after glew"); //using glew, there is an GL error here..
+    //but it seems safe to ignore it.
+    //http://www.opengl.org/wiki/OpenGL_Loading_Library
+    //it only show the error for opengl 3.2..
+
     Material::init();  //the matarial have to have a opengl context
-    //qDebug()<<"glwidge,2";
 
     QGLFormat glFormat = QGLWidget::format();
     if ( !glFormat.sampleBuffers() )
@@ -49,7 +53,6 @@ void GLWidget::initializeGL()
     ObjParser obj;
     //obj.parse(std::string("/home/wujun/workspace/game/opengl/cube.obj"), rootNode.geomrtries);
     obj.parse(std::string("model/REORCTaxi/taxi.obj"), rootNode.geomrtries);
-
     //tm.loadObj("/home/wujun/Downloads/qq26-openglcanvas/qt.obj");
     //tm.loadObj("/home/wujun/Downloads/qq26-openglcanvas/models/toyplane.obj");
 
