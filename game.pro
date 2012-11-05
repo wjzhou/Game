@@ -18,7 +18,7 @@ SOURCES +=  \
     material.cpp \
     shader.cpp \
     camera.cpp \
-    mac_ogl_context.mm
+
 
 HEADERS  += \
     glwidget.h \
@@ -57,7 +57,7 @@ SOURCES += ply/ply_parser.cpp
 
 DESTDIR=$$_PRO_FILE_PWD_
 
-mac {
+macx {
      OBJECTIVE_SOURCES  += mac_ogl_context.mm
      LIBS += -framework Foundation -framework Cocoa
 }

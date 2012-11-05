@@ -1,5 +1,6 @@
 #ifndef MACCONTEXT_HPP
 #define MACCONTEXT_HPP
+#ifdef __APPLE__
 #include <QGLWidget>
 void* select_3_2_mac_visual(GDHandle handle); //this is a object-c function borrow from qt forum
 struct MacCore32Context : public QGLContext
@@ -12,5 +13,5 @@ struct MacCore32Context : public QGLContext
   return select_3_2_mac_visual(handle);
  }
 };
-
+#endif
 #endif // MACCONTEXT_HPP
