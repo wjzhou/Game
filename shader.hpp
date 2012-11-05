@@ -1,15 +1,14 @@
 #ifndef SHADER_HPP
 #define SHADER_HPP
-#include <tr1/unordered_map>
-#include <tr1/memory>
-#include <QGLShaderProgram>
+#include "common.hpp"
 class Shader
 {
 public:
-    Shader(const QString& vertexShaderPath,
-           const QString& fragmentShaderPath);
-    QGLShaderProgram m_shader;
+    Shader(const char* vertexShaderPath,
+           const char* fragmentShaderPath);
     GLuint getShaderId();
+protected:
+    GLuint shaderId;
 };
 
 #endif // SHADER_HPP
