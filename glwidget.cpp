@@ -16,6 +16,13 @@ GLWidget::GLWidget( const QGLFormat& format, QWidget* parent )
 
 }
 
+GLWidget::GLWidget(QGLContext* context, QWidget* parent)
+    :QGLWidget(context, parent)
+{
+
+}
+
+
 GLWidget::~GLWidget(){
     Material::exit();
 }
@@ -31,13 +38,14 @@ void GLWidget::initializeGL()
     {
       qDebug("Error: %s\n", glewGetErrorString(err));
     }
-
-    qDebug("Status: Using GLEW %s\n", glewGetString(GLEW_VERSION));
-
+    qDebug("Status: Using GLEW %s",glewGetString(GLEW_VERSION));
     checkGLError("after glew"); //using glew, there is an GL error here..
     //but it seems safe to ignore it.
     //http://www.opengl.org/wiki/OpenGL_Loading_Library
     //it only show the error for opengl 3.2..
+
+    qDebug("GL Version: %s",glGetString(GL_VERSION));
+    qDebug("GLSL version:%s",glGetString(GL_SHADING_LANGUAGE_VERSION));
 
     Material::init();  //the matarial have to have a opengl context
 
@@ -49,6 +57,9 @@ void GLWidget::initializeGL()
     glClearColor( 0.2f, 0.0f, 0.0f, 1.0f );
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
+
+    QDir currDir;
+    qDebug()<<currDir.canonicalPath();
 
     ObjParser obj;
     //obj.parse(std::string("/home/wujun/workspace/game/opengl/cube.obj"), rootNode.geomrtries);

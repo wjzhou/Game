@@ -17,7 +17,8 @@ SOURCES +=  \
     scene/geometry.cpp \
     material.cpp \
     shader.cpp \
-    camera.cpp
+    camera.cpp \
+    mac_ogl_context.mm
 
 HEADERS  += \
     glwidget.h \
@@ -32,7 +33,8 @@ HEADERS  += \
     shader.hpp \
     transform.hpp \
     shaderstatus.hpp \
-    camera.hpp
+    camera.hpp \
+    mac_ogl_context.hpp
 
 OTHER_FILES +=  \
                 simple.vert \
@@ -54,6 +56,11 @@ SOURCES += ply/ply_parser.cpp
 #BISONSOURCES = gramma/SceneParser.ypp
 
 DESTDIR=$$_PRO_FILE_PWD_
+
+mac {
+     OBJECTIVE_SOURCES  += mac_ogl_context.mm
+     LIBS += -framework Foundation -framework Cocoa
+}
 
 include(gramma/flex.pri)
 include(gramma/bison.pri)

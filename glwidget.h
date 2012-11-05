@@ -12,6 +12,7 @@ class GLWidget : public QGLWidget
 {
     Q_OBJECT
 public:
+    GLWidget(QGLContext* context, QWidget * parent = 0);
     GLWidget( const QGLFormat& format, QWidget* parent = 0 );
     ~GLWidget();
 
