@@ -7,7 +7,7 @@
 #include "trianglemesh.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include "scene/node.hpp"
-#include "objparser.h"
+#include "objparser.hpp"
 #include "shader.hpp"
 #include "shaderstatus.hpp"
 GLWidget::GLWidget( const QGLFormat& format, QWidget* parent )

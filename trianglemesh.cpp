@@ -1,7 +1,6 @@
 #include "trianglemesh.hpp"
 #include "ply/TrianglePly.hpp"
 #include "glm/glm.hpp"
-#include "objparser.h"
 #include <QtDebug>
 
 TriangleMesh::TriangleMesh()
